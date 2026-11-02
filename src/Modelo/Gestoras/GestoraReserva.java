@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class GestoraReserva implements GestoraGenerica<Reserva>{
+public class GestoraReserva implements GestoraGenerica<Reserva> {
     private List<Reserva> reservas;
 
     public GestoraReserva() {
