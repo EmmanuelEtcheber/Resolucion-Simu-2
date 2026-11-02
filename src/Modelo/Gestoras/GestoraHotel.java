@@ -1,6 +1,6 @@
 package Modelo.Gestoras;
 
-import Excepciones.CupoLlenoException;
+import Excepciones.*;
 import Modelo.Actividad;
 import Modelo.Cliente;
 import Modelo.Resenia;
@@ -20,11 +20,11 @@ public class GestoraHotel {
 
     }
 
-    public void agregarCliente(Cliente cliente) {
+    public void agregarCliente(Cliente cliente) throws ElementoDuplicadoException {
         gestoraClientes.agregar(cliente);
     }
 
-    public void agregarActividad(Actividad actividad) {
+    public void agregarActividad(Actividad actividad) throws ElementoDuplicadoException {
         gestoraActividades.agregar(actividad);
     }
 
@@ -32,7 +32,7 @@ public class GestoraHotel {
         gestoraReserva.agregar(reserva);
     }
 
-    public void cargarActividadReserva(int idActividad, int idReserva) throws CupoLlenoException {
+    public void cargarActividadReserva(int idActividad, int idReserva) throws CupoLlenoException, ElementoDuplicadoException, ActividadInexistenteException, ReservaInexistenteException {
         Reserva buscada = gestoraReserva.obtener(idReserva);
         if (buscada != null) {
             Actividad actividad = gestoraActividades.obtener(idActividad);
@@ -41,14 +41,17 @@ public class GestoraHotel {
                     throw new CupoLlenoException(actividad);
                 buscada.getActividades().agregar(actividad);
             }
-            //else
-                //lanzar Excepcion actividad no existe
+            else {
+                throw new ActividadInexistenteException(idActividad);
+            }
+
         }
-        //else
-            //lanzarExcepcion
+        else {
+            throw new ReservaInexistenteException(idReserva);
+        }
     }
 
-    public void cargarPaqueteReserva(String nombrePaquete, int idReserva) throws CupoLlenoException {
+    public void cargarPaqueteReserva(String nombrePaquete, int idReserva) throws CupoLlenoException, ElementoDuplicadoException, PaqueteVacioException, ReservaInexistenteException {
         Reserva buscada = gestoraReserva.obtener(idReserva);
         if (buscada != null) {
             List<Actividad> paquete = gestoraActividades.obtenerPaquete(nombrePaquete);
@@ -59,18 +62,39 @@ public class GestoraHotel {
                     buscada.getActividades().agregar(actividad);
                 }
             }
-            //else
-            //lanzar Excepcion paquetevacio
+            else {
+                throw new PaqueteVacioException(nombrePaquete);
+            }
+
+        } else
+        {
+            throw new ReservaInexistenteException(idReserva);
         }
-        //else
-        //lanzarExcepcion
+
     }
 
-    public void agregarResenia(Resenia nueva, int idCliente) {
+    public void agregarResenia(Resenia nueva, int idCliente) throws ClienteInexistenteException, ReseniaInexistenteException, CupoVacioException {
         Cliente aux = gestoraClientes.obtener(idCliente);
         if (aux != null) {
-            aux.ingresarResenia(nueva);
-            nueva.getActividad().disminuirCupo();
+            if(nueva != null) {
+                aux.ingresarResenia(nueva);
+                if (nueva.getActividad().getCupoActual()>0)
+                {
+                nueva.getActividad().disminuirCupo();
+
+                }
+                else
+                {
+                    throw new CupoVacioException();
+                }
+            }
+            else {
+                throw new ReseniaInexistenteException();
+            }
+
+        }
+        else {
+            throw new ClienteInexistenteException(idCliente);
         }
     }
 

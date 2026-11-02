@@ -1,9 +1,12 @@
 package Modelo.Gestoras;
 
-import Excepciones.PaqueteInexistenteException;
+import Excepciones.ElementoDuplicadoException;
 import Modelo.Actividad;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GestoraActividades implements GestoraGenerica<Actividad> {
     public Map<Integer,Actividad> actividades;
@@ -15,8 +18,15 @@ public class GestoraActividades implements GestoraGenerica<Actividad> {
     }
 
     @Override
-    public void agregar(Actividad elemento) {
-        actividades.put(elemento.getId(),elemento);
+    public void agregar(Actividad elemento) throws ElementoDuplicadoException {
+
+            if(actividades.containsKey(elemento.getId()))
+            {
+                throw new ElementoDuplicadoException();
+            }
+            actividades.put(elemento.getId(),elemento);
+
+
     }
 
     @Override
