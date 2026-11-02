@@ -25,6 +25,7 @@ public class ConexionClientes {
         } catch (SQLException e) {
             throw new ConexionTablaExcepcion();
         }
+
     }
 
     public static void insertarCliente(Cliente l) throws ConexionException {
